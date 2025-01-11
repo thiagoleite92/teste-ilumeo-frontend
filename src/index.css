@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@font-face {
+  font-family: 'Montserrat Regular';
+  src: url('/assets/fonts/Montserrat-Regular.ttf') format('ttf');
+}
+@font-face {
+  font-family: 'Montserrat Bold';
+  src: url('/assets/fonts/Montserrat-Bold.ttf') format('ttf');
+}
+
+@tailwind utilities;
+
+body {
+  @apply bg-blue text-gray font-regular antialiased tracking-wide h-screen;
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
