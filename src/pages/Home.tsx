@@ -1,12 +1,16 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { EmployeeContext } from '@/contexts/EmployeeContext';
-import { useCallback, useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 
 export function Home() {
-  const { generateEmployeeCode, employeeCodes } = useContext(EmployeeContext);
-
-  const [selectedCode, setSelectedCode] = useState<string>('');
+  const {
+    generateEmployeeCode,
+    employeeCodes,
+    selectedCode,
+    isLoading,
+    handleOnChangeCode,
+  } = useContext(EmployeeContext);
 
   const handleGenerateEmployeeCode = () => {
     generateEmployeeCode();
@@ -16,7 +20,7 @@ export function Home() {
     if (event.target.value?.length > 6) {
       return;
     }
-    setSelectedCode(event.target.value);
+    handleOnChangeCode(event.target.value);
   };
 
   const handleConfirmCode = (selectedCode: string) => {
@@ -43,7 +47,7 @@ export function Home() {
             <Button
               className="text-blue-text font-bold "
               variant="secondary"
-              onClick={() => setSelectedCode('')}
+              onClick={() => handleOnChangeCode('')}
             >
               Limpar
             </Button>
@@ -54,13 +58,16 @@ export function Home() {
           onClick={() => {
             handleConfirmCode(selectedCode);
           }}
+          disabled={!selectedCode}
         >
           Confirmar
         </Button>
+
         <Button
-          className=" w-full text-blue-text font-bold "
+          className=" w-full text-blue-text font-bold disabled:cursor-wait "
           variant="secondary"
           onClick={handleGenerateEmployeeCode}
+          disabled={isLoading}
         >
           Gerar Código
         </Button>
@@ -73,7 +80,7 @@ export function Home() {
       )}
       {employeeCodes?.length > 0 && (
         <>
-          <h3 className="bg-blue-text w-full py-2 items-center flex justify-center">
+          <h3 className="bg-blue-text w-full py-2 items-center flex justify-center rounded-sm">
             Selecione um código
           </h3>
           <ul className=" overflow-y-auto h-1/3 w-full space-y-2">
@@ -82,7 +89,7 @@ export function Home() {
                 asChild
                 className="bg-blue-text w-full flex justify-center items-center rounded-sm py-2 hover:cursor-pointer uppercase"
                 key={code?.id}
-                onClick={() => setSelectedCode(code.employeeCode)}
+                onClick={() => handleOnChangeCode(code.employeeCode)}
               >
                 <li>{code?.employeeCode}</li>
               </Button>

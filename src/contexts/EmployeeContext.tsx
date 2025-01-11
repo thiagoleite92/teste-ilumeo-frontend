@@ -10,6 +10,8 @@ interface EmployeeContext {
   employeeCodes: EmployeeCodeType[];
   generateEmployeeCode: VoidFunction;
   isLoading: boolean;
+  selectedCode: string;
+  handleOnChangeCode: (value: string) => void;
 }
 
 interface EmployeeCodesResponse {
@@ -21,11 +23,25 @@ export const EmployeeContext = createContext({} as EmployeeContext);
 export function EmployeeProvider({ children }: EmployeesProviderProps) {
   const [employeeCodes, setEmployeeCodes] = useState<EmployeeCodeType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [selectedCode, setSelectedCode] = useState('');
+
+  const handleOnChangeCode = (value: string) => {
+    setSelectedCode(value);
+  };
 
   const generateEmployeeCode = async () => {
-    const { data } = await api.post('/employee/generate-code');
+    setIsLoading(true);
 
-    setEmployeeCodes((prevCodes) => [data, ...prevCodes]);
+    try {
+      const { data } = await api.post('/employee/generate-code');
+
+      setEmployeeCodes((prevCodes) => [data, ...prevCodes]);
+      setSelectedCode(data.employeeCode);
+    } catch (error) {
+      console.error('Error fetching employee codes:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const fetchEmployeeCodes = async () => {
@@ -49,6 +65,8 @@ export function EmployeeProvider({ children }: EmployeesProviderProps) {
     generateEmployeeCode,
     employeeCodes,
     isLoading,
+    selectedCode,
+    handleOnChangeCode,
   };
 
   return (
