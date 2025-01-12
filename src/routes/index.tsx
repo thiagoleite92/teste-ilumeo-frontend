@@ -1,9 +1,24 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { EmployeeContext } from '@/contexts/EmployeeContext';
+import { EmployeeContext, EmployeeProvider } from '@/contexts/EmployeeContext';
+import {
+  WorkShiftsContext,
+  WorkShiftsProvider,
+} from '@/contexts/WorkShiftsContext';
+import { createFileRoute } from '@tanstack/react-router';
 import { useContext, useState } from 'react';
 
-export function Home() {
+export const Route = createFileRoute('/')({
+  component: () => (
+    <WorkShiftsProvider>
+      <EmployeeProvider>
+        <RouteComponent />
+      </EmployeeProvider>
+    </WorkShiftsProvider>
+  ),
+});
+
+function RouteComponent() {
   const {
     generateEmployeeCode,
     employeeCodes,
@@ -11,6 +26,10 @@ export function Home() {
     isLoading,
     handleOnChangeCode,
   } = useContext(EmployeeContext);
+
+  const { handleEmployeeLogIn } = useContext(WorkShiftsContext);
+
+  const [isCodeCorrect, setIsCodeCorrect] = useState(true);
 
   const handleGenerateEmployeeCode = () => {
     generateEmployeeCode();
@@ -24,13 +43,16 @@ export function Home() {
   };
 
   const handleConfirmCode = (selectedCode: string) => {
-    console.log(
-      employeeCodes.find((codes) => codes.employeeCode === selectedCode)
-    );
+    if (!employeeCodes.find((codes) => codes.employeeCode === selectedCode)) {
+      setIsCodeCorrect(false);
+      return;
+    }
+
+    handleEmployeeLogIn(selectedCode);
   };
 
   return (
-    <div className="flex items-center justify-center h-screen flex-col w-[350px] gap-10 mx-auto">
+    <div className="flex items-center justify-center h-screen flex-col w-[350px] gap-8 mx-auto">
       <h1 className="text-xl font-regular text-gray self-start ">
         Ponto <span className="font-bold">Ilumeo</span>
       </h1>
@@ -47,18 +69,24 @@ export function Home() {
             <Button
               className="text-blue-text font-bold "
               variant="secondary"
-              onClick={() => handleOnChangeCode('')}
+              onClick={() => {
+                handleOnChangeCode('');
+                setIsCodeCorrect(true);
+              }}
             >
               Limpar
             </Button>
           )}
         </div>
+        {!isCodeCorrect && (
+          <span className="text-red-500">Verifique o código</span>
+        )}
         <Button
           className="bg-yellowBg w-full text-blue-text font-bold"
           onClick={() => {
             handleConfirmCode(selectedCode);
           }}
-          disabled={!selectedCode}
+          disabled={!selectedCode || !isCodeCorrect}
         >
           Confirmar
         </Button>
@@ -89,7 +117,11 @@ export function Home() {
                 asChild
                 className="bg-blue-text w-full flex justify-center items-center rounded-sm py-2 hover:cursor-pointer uppercase"
                 key={code?.id}
-                onClick={() => handleOnChangeCode(code.employeeCode)}
+                onClick={() => {
+                  handleOnChangeCode(code.employeeCode);
+
+                  setIsCodeCorrect(true);
+                }}
               >
                 <li>{code?.employeeCode}</li>
               </Button>
