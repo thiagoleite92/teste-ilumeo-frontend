@@ -39,3 +39,8 @@ export function updateEmployeeLogsExitTime(employeeLog: EmployeeLogType) {
     return;
   }
 }
+
+export function clearStorage() {
+  localStorage.removeItem(EMPLOYEE_CODE);
+  localStorage.removeItem(EMPLOYEE_LOGS);
+}

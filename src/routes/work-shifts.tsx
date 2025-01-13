@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { api } from '@/lib/axios';
 
 import {
+  clearStorage,
   getEmployeeCode,
   getEmployeeLogs,
   updateEmployeeLogsEntryTime,
@@ -9,7 +10,8 @@ import {
 } from '@/storage/storageEmployeeLogs';
 import { EmployeeLogType } from '@/types/EmployeeLog';
 import { extractDate, extractTime } from '@/utils/date-format';
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
+import { LogOut } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export const Route = createFileRoute('/work-shifts')({
@@ -30,6 +32,7 @@ export const Route = createFileRoute('/work-shifts')({
 
 function RouteComponent() {
   const { employeeCode } = Route.useLoaderData();
+  const navigate = useNavigate();
 
   const [logs, setLogs] = useState<EmployeeLogType[]>([]);
   const [code, setCode] = useState('');
@@ -83,6 +86,11 @@ function RouteComponent() {
     }
   };
 
+  const handleLogOut = () => {
+    clearStorage();
+    navigate({ to: '/' });
+  };
+
   useEffect(() => {
     setLogs(getEmployeeLogs());
     setCode(getEmployeeCode() || '');
@@ -95,9 +103,18 @@ function RouteComponent() {
           <h3 className="text-xl text-gray self-start flex flex-col">
             Data: {extractDate(new Date().toISOString())}
           </h3>
-          <span className="font-regular flex flex-col justify-end">
-            #{employeeCode?.toUpperCase()}
-          </span>
+          <div className="flex flex-col gap-2">
+            <Button
+              className="bg-yellowBg w-full text-blue-text font-bold"
+              onClick={handleLogOut}
+            >
+              Sair <LogOut />
+            </Button>
+
+            <span className="font-regular flex flex-col justify-end">
+              #{employeeCode?.toUpperCase()}
+            </span>
+          </div>
         </div>
         <div className="flex flex-col justify-center gap-6 w-full">
           <Button
