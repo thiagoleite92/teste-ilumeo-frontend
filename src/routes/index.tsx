@@ -1,10 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { EmployeeContext, EmployeeProvider } from '@/contexts/EmployeeContext';
-import {
-  WorkShiftsContext,
-  WorkShiftsProvider,
-} from '@/contexts/WorkShiftsContext';
+import { EmployeeContext } from '@/contexts/EmployeeContext';
+import { EmployeeProvider } from '@/contexts/EmployeeProvider';
+import { WorkShiftsContext } from '@/contexts/WorkShiftsContext';
+import { WorkShiftsProvider } from '@/contexts/WorkShiftsProvider';
 import { createFileRoute } from '@tanstack/react-router';
 import { useContext, useState } from 'react';
 
@@ -25,7 +24,7 @@ function RouteComponent() {
     selectedCode,
     isLoading,
     handleOnChangeCode,
-  } = useContext(EmployeeContext);
+  } = useContext(EmployeeContext) as EmployeeContext;
 
   const { handleEmployeeLogIn } = useContext(WorkShiftsContext);
 

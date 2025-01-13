@@ -1,0 +1,68 @@
+import { useState, ReactNode, useEffect } from 'react';
+import { api } from '@/lib/axios';
+import { EmployeeCodeType } from '@/types/EmployeeCode';
+import { EmployeeContext } from './EmployeeContext';
+
+interface EmployeeCodesResponse {
+  employeeCodes: EmployeeCodeType[];
+}
+
+interface EmployeesProviderProps {
+  children: ReactNode;
+}
+
+export function EmployeeProvider({ children }: EmployeesProviderProps) {
+  const [employeeCodes, setEmployeeCodes] = useState<EmployeeCodeType[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [selectedCode, setSelectedCode] = useState('');
+
+  const handleOnChangeCode = (value: string) => {
+    setSelectedCode(value);
+  };
+
+  const generateEmployeeCode = async () => {
+    setIsLoading(true);
+
+    try {
+      const { data } = await api.post('/employee/generate-code');
+
+      setEmployeeCodes((prevCodes) => [data, ...prevCodes]);
+      setSelectedCode(data.employeeCode);
+    } catch (error) {
+      console.error('Error fetching employee codes:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchEmployeeCodes = async () => {
+    setIsLoading(true);
+
+    try {
+      const response = await api.get<EmployeeCodesResponse>('/employee/codes');
+      setEmployeeCodes(response.data.employeeCodes);
+    } catch (error) {
+      console.error('Error fetching employee codes:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEmployeeCodes();
+  }, []);
+
+  const value = {
+    employeeCodes,
+    isLoading,
+    selectedCode,
+    generateEmployeeCode,
+    handleOnChangeCode,
+  };
+
+  return (
+    <EmployeeContext.Provider value={value}>
+      {children}
+    </EmployeeContext.Provider>
+  );
+}

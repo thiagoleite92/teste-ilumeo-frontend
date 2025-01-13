@@ -49,7 +49,9 @@ function RouteComponent() {
 
         return [response.data.entryTime, ...logs];
       });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleRegisterExitTIme = async () => {
@@ -76,12 +78,14 @@ function RouteComponent() {
 
         return logs;
       });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
     setLogs(getEmployeeLogs());
-    setCode(employeeCode ?? '');
+    setCode(getEmployeeCode() || '');
   }, []);
 
   return (

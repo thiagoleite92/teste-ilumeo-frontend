@@ -23,7 +23,7 @@ export function getEmployeeCode(): string | null {
 export function updateEmployeeLogsEntryTime(employeeLog: EmployeeLogType) {
   const logs = getEmployeeLogs();
 
-  logs.push(employeeLog);
+  logs.unshift(employeeLog);
 
   saveEmployeeLogs(logs);
 }
