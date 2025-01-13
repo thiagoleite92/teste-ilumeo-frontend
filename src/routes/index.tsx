@@ -108,7 +108,7 @@ function RouteComponent() {
       {employeeCodes?.length > 0 && (
         <>
           <h3 className="bg-blue-text w-full py-2 items-center flex justify-center rounded-sm">
-            Selecione um código
+            Selecione um código abaixo
           </h3>
           <ul className=" overflow-y-auto h-1/3 w-full space-y-2">
             {employeeCodes?.map((code) => (

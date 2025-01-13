@@ -57,7 +57,7 @@ function RouteComponent() {
     }
   };
 
-  const handleRegisterExitTIme = async () => {
+  const handleRegisterExitTime = async () => {
     try {
       const response = await api.post<{
         exitTime: EmployeeLogType;
@@ -110,7 +110,6 @@ function RouteComponent() {
             >
               Sair <LogOut />
             </Button>
-
             <span className="font-regular flex flex-col justify-end">
               #{employeeCode?.toUpperCase()}
             </span>
@@ -143,18 +142,15 @@ function RouteComponent() {
                 {logs.map((log) => (
                   <li key={log.id}>
                     <Button
-                      asChild
-                      className="bg-blue-text w-full flex justify-between items-center rounded-sm py-2 hover:cursor-pointer uppercase disabled:cursor-not-allowed"
+                      className="bg-blue-text w-full flex justify-between items-center rounded-sm py-2  uppercase hover:pointer"
                       key={log?.id}
                       onClick={() => {
-                        handleRegisterExitTIme();
+                        handleRegisterExitTime();
                       }}
                       disabled={!!log?.exitTime}
                     >
-                      <div>
-                        <span>{extractDate(log?.entryTime)}</span>
-                        <span>{extractTime(log.entryTime)}</span>
-                      </div>
+                      <span>{extractDate(log?.entryTime)}</span>
+                      <span>{extractTime(log.entryTime)}</span>
                     </Button>
                     <span className="text-sm italic text-yellowBg">
                       {log?.exitTime
