@@ -94,7 +94,6 @@ function RouteComponent() {
         <div className="flex justify-between w-full">
           <h3 className="text-xl text-gray self-start flex flex-col">
             Data: {extractDate(new Date().toISOString())}
-            <span className="font-bold italic text-sm">não registrada</span>
           </h3>
           <span className="font-regular flex flex-col justify-end">
             #{employeeCode?.toUpperCase()}
@@ -140,7 +139,7 @@ function RouteComponent() {
                         <span>{extractTime(log.entryTime)}</span>
                       </div>
                     </Button>
-                    <span className="text-sm italic text-red-600">
+                    <span className="text-sm italic text-yellowBg">
                       {log?.exitTime
                         ? `Saída: ${extractTime(log?.exitTime)}`
                         : 'Clique para registrar saída'}
