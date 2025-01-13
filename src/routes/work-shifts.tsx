@@ -4,6 +4,8 @@ import { api } from '@/lib/axios';
 import {
   getEmployeeCode,
   getEmployeeLogs,
+  updateEmployeeLogsEntryTime,
+  updateEmployeeLogsExitTime,
 } from '@/storage/storageEmployeeLogs';
 import { EmployeeLogType } from '@/types/EmployeeLog';
 import { extractDate, extractTime } from '@/utils/date-format';
@@ -22,238 +24,83 @@ export const Route = createFileRoute('/work-shifts')({
       });
     }
 
-    return { employeeLogs: getEmployeeLogs(), employeeCode: employeeCode };
+    return { employeeCode };
   },
 });
 
 function RouteComponent() {
-  const { employeeLogs, employeeCode } = Route.useLoaderData();
+  const { employeeCode } = Route.useLoaderData();
 
-  const [logs, setLogs] = useState<EmployeeLogType[]>([
-    {
-      id: 7,
-      employeeId: 67,
-      entryTime: '2025-01-12T11:30:23.542Z',
-      exitTime: null,
-      createdAt: '2025-01-12T11:30:23.544Z',
-      updatedAt: '2025-01-12T11:30:23.544Z',
-    },
-  ]);
+  const [logs, setLogs] = useState<EmployeeLogType[]>([]);
+  const [code, setCode] = useState('');
 
-  const handleRegisterEntryTime = async (employeeCode: string) => {
-    setLogs([
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-    ]);
-    return;
+  const handleRegisterEntryTime = async () => {
     try {
-      const response = await api.post('/work-shift/entry-time', {
-        employeeCode,
+      const response = await api.post<{
+        entryTime: EmployeeLogType;
+        message: string;
+      }>('/work-shift/entry-time', {
+        employeeCode: code,
       });
 
-      console.log(response);
+      updateEmployeeLogsEntryTime(response.data.entryTime);
+      setLogs((oldState) => {
+        const logs = oldState.slice();
+
+        return [response.data.entryTime, ...logs];
+      });
+    } catch (error) {}
+  };
+
+  const handleRegisterExitTIme = async () => {
+    try {
+      const response = await api.post<{
+        exitTime: EmployeeLogType;
+        message: string;
+      }>('/work-shift/exit-time', {
+        employeeCode: code,
+      });
+
+      updateEmployeeLogsExitTime(response.data.exitTime);
+      setLogs((oldState) => {
+        const logs = oldState.slice();
+
+        const logIndex = logs.findIndex(
+          (log) => log.id === response.data.exitTime.id
+        );
+
+        if (logIndex > -1) {
+          logs[logIndex] = response.data.exitTime;
+          return logs;
+        }
+
+        return logs;
+      });
     } catch (error) {}
   };
 
   useEffect(() => {
-    setLogs([
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-      {
-        id: 7,
-        employeeId: 67,
-        entryTime: '2025-01-12T11:30:23.542Z',
-        exitTime: null,
-        createdAt: '2025-01-12T11:30:23.544Z',
-        updatedAt: '2025-01-12T11:30:23.544Z',
-      },
-    ]);
-    return;
-    setLogs(employeeLogs);
+    setLogs(getEmployeeLogs());
+    setCode(employeeCode ?? '');
   }, []);
 
   return (
     <>
-      <div className="flex items-center justify-center flex-col sm:max-w-[600px] gap-8 mx-auto flex-1  px-4  shadow-lg shadow-yellowBg">
+      <div className="flex items-center justify-center flex-col gap-8 w-[400px] bg-blue p-4 bg-white/10 border border-white/20 shadow-lg rounded-lg  text-white">
         <div className="flex justify-between w-full">
-          <h1 className="text-xl text-gray self-start flex flex-col">
-            Data atual: {extractDate(new Date().toISOString())}
-            <span className="font-bold italic text-md">não registrada</span>
-          </h1>
+          <h3 className="text-xl text-gray self-start flex flex-col">
+            Data: {extractDate(new Date().toISOString())}
+            <span className="font-bold italic text-sm">não registrada</span>
+          </h3>
           <span className="font-regular flex flex-col justify-end">
-            {employeeCode}
-            <span>Código</span>
+            #{employeeCode?.toUpperCase()}
           </span>
         </div>
         <div className="flex flex-col justify-center gap-6 w-full">
           <Button
             className="bg-yellowBg w-full text-blue-text font-bold"
             onClick={() => {
-              handleRegisterEntryTime('');
+              handleRegisterEntryTime();
             }}
           >
             Registrar Horário de Entrada
@@ -274,19 +121,27 @@ function RouteComponent() {
               </h3>
               <ul className=" overflow-y-auto max-h-[375px]  w-full space-y-2">
                 {logs.map((log) => (
-                  <Button
-                    asChild
-                    className="bg-blue-text w-full flex justify-between items-center rounded-sm py-2 hover:cursor-pointer uppercase"
-                    key={log?.id}
-                    onClick={() => {
-                      console.log('oi');
-                    }}
-                  >
-                    <li>
-                      <span>{extractDate(log?.entryTime)}</span>
-                      <span>{extractTime(log.entryTime)}</span>
-                    </li>
-                  </Button>
+                  <li key={log.id}>
+                    <Button
+                      asChild
+                      className="bg-blue-text w-full flex justify-between items-center rounded-sm py-2 hover:cursor-pointer uppercase disabled:cursor-not-allowed"
+                      key={log?.id}
+                      onClick={() => {
+                        handleRegisterExitTIme();
+                      }}
+                      disabled={!!log?.exitTime}
+                    >
+                      <div>
+                        <span>{extractDate(log?.entryTime)}</span>
+                        <span>{extractTime(log.entryTime)}</span>
+                      </div>
+                    </Button>
+                    <span className="text-sm italic text-red-600">
+                      {log?.exitTime
+                        ? `Saída: ${extractTime(log?.exitTime)}`
+                        : 'Clique para registrar saída'}
+                    </span>
+                  </li>
                 ))}
               </ul>
             </>

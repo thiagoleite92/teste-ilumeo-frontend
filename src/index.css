@@ -12,7 +12,7 @@
 @tailwind utilities;
 
 body {
-  @apply bg-blue text-gray font-regular antialiased tracking-wide flex flex-col justify-center items-center h-screen;
+  @apply text-gray font-regular antialiased tracking-wide flex flex-col justify-center items-center h-screen bg-blue;
 }
 
 @layer base {

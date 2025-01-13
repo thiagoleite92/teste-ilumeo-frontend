@@ -19,3 +19,23 @@ export function saveEmployeeCode(employeeCode: string) {
 export function getEmployeeCode(): string | null {
   return localStorage.getItem(EMPLOYEE_CODE);
 }
+
+export function updateEmployeeLogsEntryTime(employeeLog: EmployeeLogType) {
+  const logs = getEmployeeLogs();
+
+  logs.push(employeeLog);
+
+  saveEmployeeLogs(logs);
+}
+
+export function updateEmployeeLogsExitTime(employeeLog: EmployeeLogType) {
+  const logs = getEmployeeLogs();
+
+  const logIndex = logs.findIndex((log) => log.id === employeeLog.id);
+
+  if (logIndex > -1) {
+    logs[logIndex] = employeeLog;
+    saveEmployeeLogs(logs);
+    return;
+  }
+}

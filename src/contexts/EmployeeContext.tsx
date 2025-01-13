@@ -49,7 +49,6 @@ export function EmployeeProvider({ children }: EmployeesProviderProps) {
 
     try {
       const response = await api.get<EmployeeCodesResponse>('/employee/codes');
-      console.log(response?.data?.employeeCodes);
       setEmployeeCodes(response.data.employeeCodes);
     } catch (error) {
       console.error('Error fetching employee codes:', error);
